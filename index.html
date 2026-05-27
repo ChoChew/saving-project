@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>น้องออม 🦕 — ตัวช่วยวางแผนการลงทุน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg1:#FFF8EC; --bg2:#FFE8D6;
+    --card:#FFFFFF; --soft:#FFF3E0; --line:#FFE0C2;
+    --text:#3D4451; --muted:#8B8B95;
+    --mint:#7BC97B; --mint-dark:#5BA85B; --mint-soft:#C8F0C0;
+    --coral:#FF8A8A; --coral-soft:#FFD0D0;
+    --yellow:#FFD93D; --yellow-soft:#FFF1A8;
+    --sky:#87CEEB; --sky-soft:#D6EFFA;
+    --pink:#FFB6D9;
+    --shadow: 0 6px 24px rgba(255, 170, 100, 0.18);
+    --shadow-sm: 0 3px 10px rgba(255, 170, 100, 0.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;
+    background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+    color:var(--text);
+    font-family:'Mali','Sarabun',-apple-system,sans-serif;
+    line-height:1.6;min-height:100vh;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:24px 18px 80px;}
+
+  /* ============ HERO ============ */
+  .hero{
+    background:linear-gradient(135deg,#FFFFFF 0%,#FFF8EC 100%);
+    border-radius:32px;padding:28px 28px 24px;margin-bottom:22px;
+    box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;width:200px;height:200px;
+    background:var(--yellow-soft);border-radius:50%;
+    top:-80px;right:-60px;opacity:0.5;z-index:0;
+  }
+  .hero::after{
+    content:'';position:absolute;width:120px;height:120px;
+    background:var(--sky-soft);border-radius:50%;
+    bottom:-40px;left:30%;opacity:0.4;z-index:0;
+  }
+  .hero-dino{
+    flex-shrink:0;z-index:1;
+    animation: bob 3s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{transform:translateY(0) rotate(-2deg)}
+    50%{transform:translateY(-8px) rotate(2deg)}
+  }
+  .hero-text{flex:1;min-width:240px;z-index:1}
+  .hero h1{
+    font-size:clamp(24px,3.5vw,34px);
+    margin:0 0 6px;font-weight:700;
+    color:var(--mint-dark);
+  }
+  .hero .sub{color:var(--muted);font-size:15px;margin-bottom:14px}
+  .speech{
+    display:inline-block;background:var(--mint-soft);
+    padding:12px 18px;border-radius:20px 20px 20px 4px;
+    font-size:14px;color:var(--text);font-weight:500;
+    position:relative;max-width:480px;
+    box-shadow:var(--shadow-sm);
+  }
+  .speech b{color:var(--mint-dark)}
+
+  /* ============ INPUTS CARD ============ */
+  .input-card{
+    background:var(--card);border-radius:28px;padding:24px;
+    box-shadow:var(--shadow);margin-bottom:20px;
+    border:2px solid var(--line);
+  }
+  .input-card h3, .card h3{
+    margin:0 0 14px;font-size:17px;font-weight:700;
+    color:var(--mint-dark);display:flex;align-items:center;gap:8px;
+  }
+  .grid{display:grid;gap:14px}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:780px){
+    .grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+    .hero{flex-direction:column;text-align:center}
+  }
+
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;font-weight:500}
+  input[type=number],select{
+    width:100%;background:var(--soft);border:2px solid var(--line);color:var(--text);
+    padding:11px 14px;border-radius:14px;font-size:15px;outline:none;
+    font-family:inherit;font-weight:500;transition:.15s;
+  }
+  input[type=number]:focus,select:focus{
+    border-color:var(--mint);background:#fff;
+    box-shadow:0 0 0 4px rgba(123,201,123,0.15);
+  }
+
+  /* ============ TABS ============ */
+  .tabs{
+    display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 18px;
+    background:rgba(255,255,255,0.5);padding:8px;border-radius:22px;
+  }
+  .tab{
+    padding:11px 18px;border-radius:16px;background:transparent;
+    color:var(--muted);border:0;cursor:pointer;font-size:14px;font-weight:600;
+    font-family:inherit;transition:.18s;display:flex;align-items:center;gap:6px;
+  }
+  .tab:hover{background:var(--soft);color:var(--text)}
+  .tab.active{
+    background:var(--mint);color:#fff;
+    box-shadow:0 4px 14px rgba(123,201,123,0.4);
+    transform:translateY(-1px);
+  }
+
+  /* ============ CARDS ============ */
+  .card{
+    background:var(--card);border-radius:24px;padding:22px;
+    box-shadow:var(--shadow-sm);border:2px solid var(--line);
+    transition:.2s;
+  }
+  .card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .card.flat:hover{transform:none}
+
+  .kpi{display:flex;flex-direction:column;gap:6px}
+  .kpi .label{color:var(--muted);font-size:13px;font-weight:500}
+  .kpi .val{font-size:26px;font-weight:700;color:var(--text);font-family:'Mali',sans-serif}
+  .kpi .hint{color:var(--muted);font-size:12px;line-height:1.5}
+
+  /* color variants */
+  .kpi-mint{background:linear-gradient(135deg,#fff 0%,var(--mint-soft) 200%)}
+  .kpi-mint .val{color:var(--mint-dark)}
+  .kpi-coral{background:linear-gradient(135deg,#fff 0%,var(--coral-soft) 200%)}
+  .kpi-coral .val{color:#E66060}
+  .kpi-yellow{background:linear-gradient(135deg,#fff 0%,var(--yellow-soft) 200%)}
+  .kpi-yellow .val{color:#C49B16}
+  .kpi-sky{background:linear-gradient(135deg,#fff 0%,var(--sky-soft) 200%)}
+  .kpi-sky .val{color:#3D8FBF}
+
+  .chip{
+    background:var(--soft);color:var(--text);padding:6px 12px;border-radius:999px;
+    font-size:12px;border:1.5px solid var(--line);font-weight:600;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .chip.good{color:var(--mint-dark);background:var(--mint-soft);border-color:var(--mint)}
+  .chip.warn{color:#C49B16;background:var(--yellow-soft);border-color:var(--yellow)}
+  .chip.bad{color:#E66060;background:var(--coral-soft);border-color:var(--coral)}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1.5px dashed var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+
+  .tab-panel{display:none}
+  .tab-panel.active{display:block;animation:pop .3s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(0.98)}to{opacity:1;transform:none}}
+
+  .note{
+    font-size:13px;color:var(--text);margin-top:12px;
+    padding:14px 16px 14px 50px;background:var(--yellow-soft);
+    border-radius:18px;position:relative;font-weight:500;
+  }
+  .note::before{
+    content:'💡';position:absolute;left:16px;top:13px;font-size:20px;
+  }
+  .note.mint{background:var(--mint-soft)}
+  .note.mint::before{content:'🦕'}
+  .note.pink{background:var(--coral-soft)}
+  .note.pink::before{content:'⚠️'}
+
+  details{
+    background:var(--soft);border:2px solid var(--line);
+    border-radius:16px;padding:12px 16px;margin-top:10px;
+  }
+  summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--mint-dark)}
+  canvas{max-height:280px}
+
+  button.btn{
+    background:var(--mint);color:#fff;border:0;
+    padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;
+    cursor:pointer;font-family:inherit;transition:.15s;
+    box-shadow:0 3px 10px rgba(123,201,123,0.3);
+  }
+  button.btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(123,201,123,0.4)}
+  button.btn.coral{background:var(--coral);box-shadow:0 3px 10px rgba(255,138,138,0.3)}
+
+  /* tip card */
+  .tip-card{
+    background:linear-gradient(135deg,var(--yellow-soft) 0%,var(--coral-soft) 100%);
+    border-radius:24px;padding:24px;border:2px dashed var(--coral);
+    position:relative;
+  }
+  .tip-card h3{color:#C49B16}
+
+  /* mini dino in tab */
+  .mini-dino{
+    display:inline-block;vertical-align:middle;margin-right:8px;
+  }
+
+  /* link cards */
+  .link-card{
+    display:block;text-decoration:none;color:inherit;
+    background:#fff;padding:16px;border-radius:18px;
+    border:2px solid var(--line);transition:.15s;
+  }
+  .link-card:hover{
+    transform:translateY(-3px);border-color:var(--mint);
+    box-shadow:0 6px 18px rgba(123,201,123,0.2);
+  }
+  .link-card b{color:var(--mint-dark);font-size:14px}
+  .link-card .desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+  /* news item */
+  .news-item{
+    padding:12px 0;border-bottom:1.5px dashed var(--line);
+  }
+  .news-item:last-child{border-bottom:0}
+  .news-item a{
+    color:var(--text);text-decoration:none;font-size:14px;
+    font-weight:600;line-height:1.5;display:block;
+  }
+  .news-item a:hover{color:var(--mint-dark)}
+  .news-meta{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+
+  /* legend */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;font-weight:500}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:middle}
+
+  footer{
+    margin-top:36px;color:var(--muted);font-size:12px;text-align:center;
+    padding:20px;background:rgba(255,255,255,0.6);border-radius:20px;
+  }
+  footer .foot-dino{font-size:32px;margin-bottom:6px;display:block}
+
+  /* bar */
+  .bar{height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
+  .bar > span{display:block;height:100%}
+
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+  /* status colors inline */
+  .good{color:var(--mint-dark);font-weight:600}
+  .danger{color:#E66060;font-weight:600}
+  .warn{color:#C49B16;font-weight:600}
+
+  /* hide scrollbar on tabs row mobile */
+  @media (max-width:600px){
+    .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+    .tab{flex-shrink:0}
+  }
+
+  /* ============ CUTE ICONS ============ */
+  .cute-icon{
+    display:inline-block;vertical-align:middle;
+    width:28px;height:28px;margin-right:10px;
+    flex-shrink:0;
+  }
+  .cute-icon-lg{width:36px;height:36px;margin-right:12px}
+  .cute-icon-sm{width:20px;height:20px;margin-right:6px}
+  td .cute-icon{margin-right:8px}
+  .row-with-icon{display:flex;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-dino">
+    <!-- น้องออม RICH EDITION 💰 -->
+    <svg width="260" height="280" viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFE680"/>
+          <stop offset="50%" stop-color="#FFD93D"/>
+          <stop offset="100%" stop-color="#C49B16"/>
+        </linearGradient>
+        <radialGradient id="diamond" cx="0.3" cy="0.3" r="0.7">
+          <stop offset="0%" stop-color="#fff"/>
+          <stop offset="50%" stop-color="#D6EFFA"/>
+          <stop offset="100%" stop-color="#87CEEB"/>
+        </radialGradient>
+      </defs>
+
+      <!-- shadow -->
+      <ellipse cx="130" cy="265" rx="80" ry="8" fill="#000" opacity="0.12"/>
+
+      <!-- Floating coins (background) -->
+      <g opacity="0.9">
+        <circle cx="38" cy="135" r="10" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5"/>
+        <text x="38" y="139" text-anchor="middle" font-size="12" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text>
+        <circle cx="232" cy="220" r="9" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5"/>
+        <text x="232" y="224" text-anchor="middle" font-size="11" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text>
+        <circle cx="22" cy="200" r="7" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1"/>
+        <text x="22" y="203" text-anchor="middle" font-size="9" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text>
+      </g>
+
+      <!-- Tail -->
+      <path d="M60 200 Q 22 175 28 132 Q 38 117 60 132 Q 70 152 78 168 Z"
+        fill="#7BC97B" stroke="#5BA85B" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Tail diamond ring -->
+      <circle cx="32" cy="138" r="5" fill="none" stroke="#FFD93D" stroke-width="2"/>
+      <path d="M30 134 L32 130 L34 134 L36 138 L32 142 L28 138 Z" fill="url(#diamond)" stroke="#3D8FBF" stroke-width="0.8"/>
+
+      <!-- Body -->
+      <ellipse cx="120" cy="185" rx="70" ry="60" fill="#7BC97B" stroke="#5BA85B" stroke-width="2.5"/>
+
+      <!-- Belly -->
+      <ellipse cx="120" cy="197" rx="48" ry="40" fill="#C8F0C0"/>
+
+      <!-- Back spikes (golden) -->
+      <path d="M62 152 L70 132 L84 152 Z" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M88 135 L100 110 L112 135 Z" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M118 122 L132 95 L146 122 Z" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M150 130 L162 108 L173 130 Z" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1.5" stroke-linejoin="round"/>
+
+      <!-- Neck -->
+      <path d="M158 148 Q 175 130 188 122" stroke="#7BC97B" stroke-width="42" fill="none" stroke-linecap="round"/>
+
+      <!-- Bow tie (red) -->
+      <path d="M170 152 L162 164 L170 158 Z" fill="#E66060" stroke="#A02020" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M170 152 L178 164 L170 158 Z" fill="#E66060" stroke="#A02020" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="170" cy="158" r="3" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1"/>
+
+      <!-- Gold chain necklace with ฿ pendant -->
+      <path d="M148 142 Q 175 168 200 142" stroke="url(#goldGrad)" stroke-width="2.5" fill="none" stroke-dasharray="2 1.5"/>
+      <circle cx="175" cy="172" r="8" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="2"/>
+      <text x="175" y="177" text-anchor="middle" font-size="11" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text>
+
+      <!-- Head -->
+      <circle cx="190" cy="118" r="42" fill="#7BC97B" stroke="#5BA85B" stroke-width="2.5"/>
+
+      <!-- TOP HAT 🎩 -->
+      <ellipse cx="192" cy="82" rx="44" ry="6" fill="#2D2D40" stroke="#1A1A2A" stroke-width="1.5"/>
+      <path d="M170 82 L172 38 Q 172 36 174 36 L210 36 Q 212 36 212 38 L214 82 Z"
+        fill="#2D2D40" stroke="#1A1A2A" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="170" y="68" width="44" height="8" fill="url(#goldGrad)" stroke="#C49B16" stroke-width="1"/>
+      <!-- Hat band buckle -->
+      <rect x="188" y="69" width="8" height="6" rx="1" fill="#FFE680" stroke="#8B6E0F" stroke-width="1"/>
+      <!-- Hat shine -->
+      <rect x="178" y="44" width="4" height="20" rx="2" fill="#fff" opacity="0.2"/>
+
+      <!-- Snout -->
+      <ellipse cx="212" cy="132" rx="18" ry="14" fill="#7BC97B" stroke="#5BA85B" stroke-width="2.5"/>
+      <circle cx="220" cy="129" r="2" fill="#3D4451"/>
+
+      <!-- Left eye (small, normal) -->
+      <ellipse cx="168" cy="112" rx="9" ry="11" fill="white" stroke="#3D4451" stroke-width="1.5"/>
+      <circle cx="171" cy="115" r="6" fill="#3D4451"/>
+      <circle cx="172" cy="112" r="2" fill="white"/>
+
+      <!-- Right eye + MONOCLE 🧐 -->
+      <ellipse cx="192" cy="108" rx="11" ry="13" fill="white" stroke="#3D4451" stroke-width="1.5"/>
+      <circle cx="195" cy="111" r="7" fill="#3D4451"/>
+      <circle cx="197" cy="108" r="2.5" fill="white"/>
+      <!-- Monocle ring (gold, thick) -->
+      <circle cx="192" cy="111" r="17" fill="none" stroke="url(#goldGrad)" stroke-width="3.5"/>
+      <circle cx="192" cy="111" r="17" fill="rgba(214,239,250,0.15)"/>
+      <!-- Monocle chain to hat -->
+      <path d="M207 122 Q 218 130 215 80" stroke="#C49B16" stroke-width="1.5" fill="none" stroke-dasharray="2 1.5"/>
+
+      <!-- Cheeks -->
+      <ellipse cx="208" cy="142" rx="6" ry="3.5" fill="#FF8A8A" opacity="0.55"/>
+      <ellipse cx="165" cy="142" rx="5" ry="3" fill="#FF8A8A" opacity="0.55"/>
+
+      <!-- Smirk (rich smile) -->
+      <path d="M190 148 Q 202 156 215 144" stroke="#3D4451" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Gold tooth glint -->
+      <rect x="200" y="148" width="3" height="3" rx="0.5" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+
+      <!-- Cigar — replaced with rolled bill -->
+      <rect x="216" y="148" width="14" height="4" rx="1" fill="#7BC97B" stroke="#5BA85B" stroke-width="1"/>
+      <rect x="226" y="148.5" width="4" height="3" rx="1" fill="#5BA85B"/>
+      <text x="223" y="151.5" text-anchor="middle" font-size="3" font-weight="900" fill="#fff" font-family="Arial">฿</text>
+
+      <!-- Tiny arms holding money bag -->
+      <ellipse cx="95" cy="183" rx="11" ry="20" fill="#7BC97B" stroke="#5BA85B" stroke-width="2"/>
+
+      <!-- Big MONEY BAG 💰 on belly -->
+      <path d="M98 170 Q 95 162 105 159 L135 159 Q 145 162 142 170 Q 150 185 148 200 Q 145 215 130 218 Q 120 220 110 218 Q 95 215 92 200 Q 90 185 98 170 Z"
+        fill="#FFB6D9" stroke="#D973A8" stroke-width="2.5"/>
+      <!-- Bag tie -->
+      <path d="M103 162 Q 120 156 137 162" stroke="#D973A8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M105 159 L108 152 L112 159 M128 159 L132 152 L135 159"
+        stroke="#D973A8" stroke-width="2" fill="#D973A8" stroke-linejoin="round"/>
+      <text x="120" y="200" text-anchor="middle" font-size="32" font-weight="900" fill="#fff" font-family="Arial">฿</text>
+
+      <!-- Legs -->
+      <rect x="87" y="225" width="24" height="30" rx="10" fill="#5BA85B"/>
+      <rect x="140" y="225" width="24" height="30" rx="10" fill="#5BA85B"/>
+      <ellipse cx="99" cy="255" rx="16" ry="6" fill="#4A964A"/>
+      <ellipse cx="152" cy="255" rx="16" ry="6" fill="#4A964A"/>
+      <!-- Golden toe nails -->
+      <circle cx="89" cy="253" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+      <circle cx="99" cy="256" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+      <circle cx="109" cy="253" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+      <circle cx="142" cy="253" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+      <circle cx="152" cy="256" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+      <circle cx="162" cy="253" r="2" fill="url(#goldGrad)" stroke="#8B6E0F" stroke-width="0.5"/>
+
+      <!-- DIAMONDS floating -->
+      <g>
+        <path d="M48 90 L52 84 L56 90 L52 98 Z" fill="url(#diamond)" stroke="#3D8FBF" stroke-width="1"/>
+        <line x1="48" y1="90" x2="56" y2="90" stroke="#fff" stroke-width="0.5"/>
+      </g>
+      <g>
+        <path d="M225 65 L230 58 L235 65 L230 75 Z" fill="url(#diamond)" stroke="#3D8FBF" stroke-width="1"/>
+        <line x1="225" y1="65" x2="235" y2="65" stroke="#fff" stroke-width="0.5"/>
+      </g>
+
+      <!-- Sparkles -->
+      <text x="20" y="70" font-size="20">✨</text>
+      <text x="225" y="180" font-size="18">✨</text>
+      <text x="155" y="30" font-size="14">⭐</text>
+      <text x="40" y="240" font-size="14">⭐</text>
+
+      <!-- $ signs floating -->
+      <text x="6" y="115" font-size="14" font-weight="900" fill="url(#goldGrad)" font-family="Arial" stroke="#C49B16" stroke-width="0.5">$</text>
+      <text x="245" y="130" font-size="16" font-weight="900" fill="url(#goldGrad)" font-family="Arial" stroke="#C49B16" stroke-width="0.5">$</text>
+    </svg>
+  </div>
+  <div class="hero-text">
+    <h1>สวัสดีครับ! ผมน้องออม 🎩💰</h1>
+    <div class="sub">ไดโนเสาร์เศรษฐีที่จะสอนวิธีรวยอย่างมีระบบให้คุณ — แบบเข้าใจง่าย</div>
+    <div class="speech">
+      <b>กรอกข้อมูลด้านล่างแค่นิดเดียว</b> ผมจะคำนวณงบรายเดือน จัดพอร์ตลงทุน ภาษีลดหย่อน และเป้าหมายระยะยาวให้เลย! 💰✨
+    </div>
+  </div>
+</section>
+
+<!-- ============ INPUTS ============ -->
+<section class="input-card">
+  <h3>🦖 บอกผมหน่อยว่า…</h3>
+  <div class="grid cols-4">
+    <div>
+      <label>เงินเดือน (บาท/เดือน)</label>
+      <input type="number" id="salary" value="35000" min="0" step="1000" />
+    </div>
+    <div>
+      <label>โบนัส/รายได้พิเศษต่อปี (บาท)</label>
+      <input type="number" id="bonus" value="70000" min="0" step="1000" />
+    </div>
+    <div>
+      <label>อายุปัจจุบัน</label>
+      <input type="number" id="age" value="30" min="18" max="70" />
+    </div>
+    <div>
+      <label>อายุที่อยากเกษียณ</label>
+      <input type="number" id="retireAge" value="60" min="35" max="75" />
+    </div>
+    <div>
+      <label>เงินสะสมปัจจุบัน (บาท)</label>
+      <input type="number" id="currentSaving" value="50000" min="0" step="1000" />
+    </div>
+    <div>
+      <label>เงินสมทบ PVD/กบข. (% เงินเดือน)</label>
+      <input type="number" id="pvdPct" value="5" min="0" max="15" step="1" />
+    </div>
+    <div>
+      <label>ระดับความเสี่ยงที่รับได้</label>
+      <select id="risk">
+        <option value="low">🐢 ต่ำ — ขอเน้นมั่นคง</option>
+        <option value="mid" selected>🦕 กลาง — รับความผันผวนได้บ้าง</option>
+        <option value="high">🚀 สูง — เน้นเติบโต</option>
+      </select>
+    </div>
+    <div>
+      <label>มีหนี้ผ่อนต่อเดือน (บาท)</label>
+      <input type="number" id="debt" value="0" min="0" step="500" />
+    </div>
+  </div>
+  <div class="note mint">ตัวเลขทุกตัวคำนวณใหม่อัตโนมัติ ไม่ต้องกดบันทึก — ลองเปลี่ยนเล่นๆ ดูได้!</div>
+</section>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="budget">💰 จัดสรรเงินเดือน</button>
+  <button class="tab" data-tab="portfolio">📈 จัดพอร์ตลงทุน</button>
+  <button class="tab" data-tab="tax">🧾 ภาษี & ลดหย่อน</button>
+  <button class="tab" data-tab="goal">🎯 เป้าหมายระยะยาว</button>
+  <button class="tab" data-tab="news">📰 ข่าว & ราคาตลาด</button>
+</div>
+
+<!-- ===== Tab 1: Budget ===== -->
+<section class="tab-panel active" id="tab-budget">
+  <div class="grid cols-3">
+    <div class="card kpi kpi-coral">
+      <span class="label">🏠 จำเป็น (Needs) 50%</span>
+      <span class="val" id="needsVal">—</span>
+      <span class="hint">ค่าเช่า อาหาร เดินทาง ค่าน้ำไฟ ผ่อนหนี้</span>
+    </div>
+    <div class="card kpi kpi-yellow">
+      <span class="label">🛍️ ความต้องการ (Wants) 30%</span>
+      <span class="val" id="wantsVal">—</span>
+      <span class="hint">ช้อปปิ้ง กินเล่น เที่ยว สตรีมมิ่ง</span>
+    </div>
+    <div class="card kpi kpi-mint">
+      <span class="label">💚 ออม + ลงทุน (Savings) 20%</span>
+      <span class="val" id="saveVal">—</span>
+      <span class="hint">เงินสำรอง + ลงทุนสร้างความมั่งคั่ง</span>
+    </div>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:16px">
+    <div class="card">
+      <h3>🥧 โครงสร้างเงินเดือนของคุณ</h3>
+      <canvas id="budgetChart"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:#FF8A8A"></span>Needs 50%</span>
+        <span><span class="dot" style="background:#FFD93D"></span>Wants 30%</span>
+        <span><span class="dot" style="background:#7BC97B"></span>Savings 20%</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🩺 เช็คสุขภาพการเงิน</h3>
+      <table>
+        <tr><th>รายการ</th><th style="text-align:right">ค่าของคุณ</th><th>สถานะ</th></tr>
+        <tr><td>อัตราหนี้ต่อรายได้</td><td style="text-align:right" id="dsrVal">—</td><td id="dsrStatus">—</td></tr>
+        <tr><td>เงินสำรอง 6 เดือน</td><td style="text-align:right" id="emergencyVal">—</td><td id="emergencyStatus">—</td></tr>
+        <tr><td>เก็บได้ % ของรายได้</td><td style="text-align:right" id="savePctVal">—</td><td id="savePctStatus">—</td></tr>
+      </table>
+      <div class="note mint">น้องออมแนะนำ: <b>มีเงินสำรองก่อน</b> (3–6 เท่าของค่าใช้จ่ายต่อเดือน) แล้วค่อยลงทุนสินทรัพย์เสี่ยงนะครับ</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>📝 ตัวอย่างจัดสรรเป็นรายหมวด (ปรับได้ตามชีวิตจริง)</h3>
+    <table id="budgetBreakdown">
+      <tr><th>หมวด</th><th>%</th><th style="text-align:right">บาท/เดือน</th></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== Tab 2: Portfolio ===== -->
+<section class="tab-panel" id="tab-portfolio">
+  <div class="grid cols-2">
+    <div class="card">
+      <h3>🎨 สัดส่วนพอร์ตที่น้องออมแนะนำ</h3>
+      <canvas id="portChart"></canvas>
+      <div class="legend" id="portLegend"></div>
+    </div>
+    <div class="card">
+      <h3>💸 เงินลงทุนรายเดือนที่แนะนำ</h3>
+      <div class="kpi kpi-mint" style="padding:16px;border-radius:18px;background:var(--mint-soft)">
+        <span class="label">ลงทุนได้ราว</span>
+        <span class="val" id="investMonthly">—</span>
+        <span class="hint">มาจาก 20% ของรายได้ หักเงินสำรอง (ถ้ายังไม่ครบ)</span>
+      </div>
+      <table style="margin-top:14px">
+        <tr><th>สินทรัพย์</th><th>%</th><th style="text-align:right">บาท/เดือน</th></tr>
+        <tbody id="portTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid cols-4" style="margin-top:16px">
+    <div class="card kpi-sky"><h3 style="color:#3D8FBF" data-icon="chart">หุ้น/กองทุน</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0">เน้นกองทุนดัชนี (SET50/S&P500) DCA ทุกเดือน เหมาะถือ 5 ปีขึ้น</p></div>
+    <div class="card kpi-mint"><h3 style="color:var(--mint-dark)" data-icon="bond">ตราสารหนี้</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0">ผันผวนต่ำ ใช้พักเงิน/ลดความเสี่ยง ผลตอบแทน 1–3%/ปี</p></div>
+    <div class="card kpi-yellow"><h3 style="color:#C49B16" data-icon="gold">ทองคำ</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0">ป้องกันเงินเฟ้อ/วิกฤต ควรมี 5–10% ไม่เกิน 15%</p></div>
+    <div class="card kpi-coral"><h3 style="color:#E66060" data-icon="crypto">คริปโต</h3>
+      <p style="font-size:13px;color:var(--muted);margin:0">ผันผวนสูงมาก ใส่ไม่เกิน 5–10% เฉพาะเงินที่หายไปได้</p></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>🦕 หลักการสำคัญที่น้องออมอยากบอก</h3>
+    <ul style="font-size:15px;color:var(--text);padding-left:20px;line-height:2">
+      <li><b>DCA (ลงทุนสม่ำเสมอ):</b> ลงเท่ากันทุกเดือน ไม่ต้องจับจังหวะตลาด</li>
+      <li><b>กระจายความเสี่ยง:</b> ไม่ทุ่มเงินก้อนเดียวในสินทรัพย์เดียว</li>
+      <li><b>Rebalance ปีละครั้ง:</b> ถ้าสัดส่วนเพี้ยนเกิน 5% ค่อยขาย/ซื้อกลับเข้าที่</li>
+      <li><b>กฎ "100 ลบอายุ":</b> = % ที่ลงสินทรัพย์เสี่ยงได้ (อายุ 30 → ลงหุ้น ~70%)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== Tab 3: Tax ===== -->
+<section class="tab-panel" id="tab-tax">
+  <div class="grid cols-3">
+    <div class="card kpi kpi-sky"><span class="label">💼 รายได้รวมต่อปี</span><span class="val" id="annualIncome">—</span></div>
+    <div class="card kpi kpi-coral"><span class="label">😱 ภาษีที่ต้องจ่าย (ก่อนใช้สิทธิ)</span><span class="val" id="taxBefore">—</span></div>
+    <div class="card kpi kpi-mint"><span class="label">😊 ภาษี (หลังลงทุนตามแผน)</span>
+      <span class="val" id="taxAfter">—</span>
+      <span class="hint">ประหยัดได้ <b id="taxSaved" style="color:var(--mint-dark)">—</b></span>
+    </div>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:16px">
+    <div class="card">
+      <h3>🎁 เพดานสิทธิลดหย่อนของคุณ</h3>
+      <table>
+        <tr><th>สิทธิ</th><th style="text-align:right">เพดาน</th><th style="text-align:right">แนะนำใช้</th></tr>
+        <tr><td>SSF</td><td style="text-align:right" id="ssfCap">—</td><td style="text-align:right" id="ssfUse">—</td></tr>
+        <tr><td>RMF</td><td style="text-align:right" id="rmfCap">—</td><td style="text-align:right" id="rmfUse">—</td></tr>
+        <tr><td>ThaiESG</td><td style="text-align:right" id="esgCap">—</td><td style="text-align:right" id="esgUse">—</td></tr>
+        <tr><td>PVD/กบข.</td><td style="text-align:right" id="pvdCap">—</td><td style="text-align:right" id="pvdUse">—</td></tr>
+        <tr><td>ประกันชีวิต</td><td style="text-align:right">100,000</td><td style="text-align:right" id="lifeUse">—</td></tr>
+      </table>
+      <div class="note pink"><b>SSF + RMF + PVD + ประกันบำนาญ + ThaiESG บางส่วน รวมกันไม่เกิน 500,000 บาท/ปี</b></div>
+    </div>
+    <div class="card">
+      <h3>📊 ฐานภาษี (อัตราขั้นบันได 2568)</h3>
+      <table>
+        <tr><th>เงินได้สุทธิ</th><th style="text-align:right">อัตรา</th></tr>
+        <tr><td>0 – 150,000</td><td style="text-align:right"><span class="chip good">ยกเว้น</span></td></tr>
+        <tr><td>150,001 – 300,000</td><td style="text-align:right">5%</td></tr>
+        <tr><td>300,001 – 500,000</td><td style="text-align:right">10%</td></tr>
+        <tr><td>500,001 – 750,000</td><td style="text-align:right">15%</td></tr>
+        <tr><td>750,001 – 1,000,000</td><td style="text-align:right">20%</td></tr>
+        <tr><td>1,000,001 – 2,000,000</td><td style="text-align:right">25%</td></tr>
+        <tr><td>2,000,001 – 5,000,000</td><td style="text-align:right">30%</td></tr>
+        <tr><td>เกิน 5,000,000</td><td style="text-align:right">35%</td></tr>
+      </table>
+      <details>
+        <summary>🦕 เทคนิคใช้สิทธิให้คุ้มจากน้องออม</summary>
+        <ol style="font-size:13px;color:var(--text);line-height:1.8">
+          <li>เริ่มจาก <b>PVD/กบข.</b> ก่อน (นายจ้างสมทบให้ฟรี = ได้กำไรทันที 100%)</li>
+          <li>ถ้าฐานภาษี ≥ 10% → ใช้ <b>SSF/ThaiESG</b></li>
+          <li>มั่นใจถือยาวถึงเกษียณ → ใช้ <b>RMF</b> (ห้ามขายก่อนอายุ 55)</li>
+          <li>เลือก <b>กองทุนดัชนีค่าธรรมเนียมต่ำ</b> เพราะถือยาว ค่าธรรมเนียมกินเยอะ</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Tab 4: Goals ===== -->
+<section class="tab-panel" id="tab-goal">
+  <div class="card">
+    <h3 data-icon="retire">เป้าหมายเกษียณ</h3>
+    <div class="grid cols-3">
+      <div>
+        <label>ค่าใช้จ่ายตอนเกษียณ (บาท/เดือน วันนี้)</label>
+        <input type="number" id="retireExpense" value="25000" min="5000" step="1000" />
+      </div>
+      <div>
+        <label>คาดอายุยืน (ปี)</label>
+        <input type="number" id="lifeExpect" value="85" min="70" max="100" />
+      </div>
+      <div>
+        <label>ผลตอบแทนที่คาดหวัง (%/ปี)</label>
+        <input type="number" id="expectReturn" value="6" min="2" max="12" step="0.5" />
+      </div>
+    </div>
+    <div class="grid cols-3" style="margin-top:14px">
+      <div class="card kpi kpi-sky"><span class="label">เงินก้อนตอนเกษียณที่ต้องมี</span>
+        <span class="val" id="retireNeed">—</span>
+        <span class="hint">ปรับเงินเฟ้อ 3%/ปี ใช้ <span id="retireYears">—</span> ปีหลังเกษียณ</span></div>
+      <div class="card kpi kpi-yellow"><span class="label">ต้องลงทุนต่อเดือน</span>
+        <span class="val" id="retireMonthly">—</span>
+        <span class="hint">DCA จนถึงอายุเกษียณ</span></div>
+      <div class="card kpi kpi-mint"><span class="label">เทียบกับแผนปัจจุบัน</span>
+        <span class="val" id="retireGap">—</span>
+        <span class="hint" id="retireGapHint">—</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3 data-icon="home2">เป้าหมายซื้อบ้าน / ดาวน์รถ</h3>
+    <div class="grid cols-3">
+      <div>
+        <label>ราคาบ้าน/รถ (บาท)</label>
+        <input type="number" id="housePrice" value="3000000" min="100000" step="100000" />
+      </div>
+      <div>
+        <label>เงินดาวน์ที่ต้องการ (%)</label>
+        <input type="number" id="downPct" value="20" min="0" max="100" step="5" />
+      </div>
+      <div>
+        <label>อยากได้ภายในกี่ปี</label>
+        <input type="number" id="houseYears" value="5" min="1" max="30" />
+      </div>
+    </div>
+    <div class="grid cols-2" style="margin-top:14px">
+      <div class="card kpi kpi-sky"><span class="label">ต้องเก็บเงินดาวน์ทั้งหมด</span><span class="val" id="downAmt">—</span></div>
+      <div class="card kpi kpi-mint"><span class="label">เก็บเดือนละ</span>
+        <span class="val" id="downMonthly">—</span>
+        <span class="hint">สมมติฝากบัญชีดอกเบี้ย 2%/ปี</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3 data-icon="baby">เป้าหมายการศึกษาลูก</h3>
+    <div class="grid cols-3">
+      <div>
+        <label>อายุลูกปัจจุบัน</label>
+        <input type="number" id="childAge" value="0" min="0" max="22" />
+      </div>
+      <div>
+        <label>ค่าเรียน ป.ตรี (วันนี้, บาท)</label>
+        <input type="number" id="eduCost" value="600000" min="100000" step="50000" />
+      </div>
+      <div>
+        <label>เงินเฟ้อการศึกษา (%/ปี)</label>
+        <input type="number" id="eduInflation" value="5" min="2" max="10" step="0.5" />
+      </div>
+    </div>
+    <div class="grid cols-2" style="margin-top:14px">
+      <div class="card kpi kpi-yellow"><span class="label">ค่าเรียนตอนลูกเข้ามหา'ลัย</span><span class="val" id="eduFuture">—</span></div>
+      <div class="card kpi kpi-mint"><span class="label">เก็บเดือนละ</span>
+        <span class="val" id="eduMonthly">—</span>
+        <span class="hint">ลงทุนผลตอบแทน 5%/ปี</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Tab 5: News ===== -->
+<section class="tab-panel" id="tab-news">
+
+  <!-- Tip of the day -->
+  <div class="tip-card">
+    <h3>💡 Tip การลงทุนวันนี้ — <span id="tipDate" style="color:var(--muted);font-weight:500;font-size:14px"></span></h3>
+    <div id="tipText" style="font-size:15px;line-height:1.8"></div>
+    <div class="row" style="margin-top:14px">
+      <button id="tipNext" class="btn coral">🎲 สุ่ม tip ใหม่</button>
+      <span class="chip" id="tipCount"></span>
+    </div>
+  </div>
+
+  <!-- Ticker tape -->
+  <div class="card" style="margin-top:16px;padding:8px">
+    <div id="tvTicker"></div>
+  </div>
+
+  <!-- Market prices -->
+  <div class="grid cols-4" style="margin-top:16px">
+    <div class="card kpi kpi-yellow"><span class="label">🥇 ทองคำโลก (USD/oz)</span>
+      <span class="val" id="goldVal">กำลังโหลด…</span>
+      <span class="hint" id="goldChg">—</span></div>
+    <div class="card kpi kpi-sky"><span class="label">💵 USD / THB</span>
+      <span class="val" id="usdthbVal">กำลังโหลด…</span>
+      <span class="hint" id="usdthbChg">อัปเดตจาก ECB</span></div>
+    <div class="card kpi kpi-coral"><span class="label">₿ Bitcoin (THB)</span>
+      <span class="val" id="btcVal">กำลังโหลด…</span>
+      <span class="hint" id="btcChg">—</span></div>
+    <div class="card kpi kpi-mint"><span class="label">Ξ Ethereum (THB)</span>
+      <span class="val" id="ethVal">กำลังโหลด…</span>
+      <span class="hint" id="ethChg">—</span></div>
+  </div>
+  <div class="row" style="margin-top:10px;justify-content:flex-end">
+    <button id="refreshPrice" class="btn">🔄 รีเฟรชราคา</button>
+    <span class="chip" id="priceUpdated">—</span>
+  </div>
+
+  <!-- News feeds -->
+  <div class="grid cols-2" style="margin-top:16px">
+    <div class="card">
+      <h3>📰 ข่าวเศรษฐกิจ-การลงทุน (ไทย)</h3>
+      <div id="newsTH">กำลังโหลดข่าว…</div>
+    </div>
+    <div class="card">
+      <h3>🌍 ข่าวการเงินโลก</h3>
+      <div id="newsGlobal">กำลังโหลดข่าว…</div>
+    </div>
+  </div>
+
+  <!-- Trusted sources -->
+  <div class="card" style="margin-top:16px">
+    <h3>🔗 แหล่งข้อมูลที่น้องออมแนะนำ</h3>
+    <div class="grid cols-4" style="gap:12px">
+      <a class="link-card" href="https://www.set.or.th" target="_blank" rel="noopener">
+        <b>🏛️ SET</b><div class="desc">ตลาดหลักทรัพย์แห่งประเทศไทย</div></a>
+      <a class="link-card" href="https://www.sec.or.th" target="_blank" rel="noopener">
+        <b>⚖️ ก.ล.ต.</b><div class="desc">ผู้กำกับดูแลตลาดทุน</div></a>
+      <a class="link-card" href="https://www.thaibma.or.th" target="_blank" rel="noopener">
+        <b>📜 ThaiBMA</b><div class="desc">ตลาดตราสารหนี้ไทย</div></a>
+      <a class="link-card" href="https://www.bot.or.th" target="_blank" rel="noopener">
+        <b>🏦 ธปท.</b><div class="desc">ธนาคารแห่งประเทศไทย</div></a>
+      <a class="link-card" href="https://www.finnomena.com" target="_blank" rel="noopener">
+        <b>📱 Finnomena</b><div class="desc">แพลตฟอร์มลงทุนไทย</div></a>
+      <a class="link-card" href="https://www.aommoney.com" target="_blank" rel="noopener">
+        <b>🐷 aomMONEY</b><div class="desc">ความรู้การเงินสำหรับมือใหม่</div></a>
+      <a class="link-card" href="https://moneybuffalo.in.th" target="_blank" rel="noopener">
+        <b>🐃 Money Buffalo</b><div class="desc">บทความวางแผนการเงิน</div></a>
+      <a class="link-card" href="https://thestandard.co/category/wealth/" target="_blank" rel="noopener">
+        <b>📈 THE STANDARD Wealth</b><div class="desc">ข่าวลงทุนเชิงลึก</div></a>
+      <a class="link-card" href="https://www.bangkokbiznews.com/category/finance" target="_blank" rel="noopener">
+        <b>🏙️ กรุงเทพธุรกิจ</b><div class="desc">ข่าวเศรษฐกิจ-การเงิน</div></a>
+      <a class="link-card" href="https://www.thansettakij.com" target="_blank" rel="noopener">
+        <b>💼 ฐานเศรษฐกิจ</b><div class="desc">ข่าวธุรกิจ-เศรษฐกิจ</div></a>
+      <a class="link-card" href="https://www.bloomberg.com/markets" target="_blank" rel="noopener">
+        <b>🌐 Bloomberg</b><div class="desc">ข่าวการเงินโลก</div></a>
+      <a class="link-card" href="https://www.investing.com/" target="_blank" rel="noopener">
+        <b>📊 Investing.com</b><div class="desc">ราคา/ข่าวสินทรัพย์ครบ</div></a>
+    </div>
+  </div>
+
+  <div class="note pink" style="margin-top:16px">
+    ข้อมูลราคาและข่าวมาจากแหล่งภายนอก อาจมีดีเลย์ — ก่อนลงทุนจริงโปรดตรวจสอบราคา ณ ผู้ให้บริการที่คุณใช้นะครับ
+  </div>
+</section>
+
+<footer>
+  <span class="foot-dino">🦕</span>
+  <p>น้องออมเป็นเครื่องมือให้คำแนะนำเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำการลงทุนเฉพาะบุคคล<br/>
+  ก่อนตัดสินใจลงทุนจริงโปรดศึกษาเพิ่มเติม หรือปรึกษาผู้แนะนำการลงทุนที่ได้รับใบอนุญาต 💚</p>
+</footer>
+
+</div>
+
+<script>
+/* ===== Tab switching ===== */
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ===== Helpers ===== */
+const baht = n => isFinite(n)? n.toLocaleString('th-TH',{maximumFractionDigits:0}) + ' ฿' : '—';
+const pct  = n => (n*100).toFixed(1) + '%';
+const $    = id => document.getElementById(id);
+
+/* ===== Cute Icons (inline SVG) ===== */
+const ICON = {
+  house: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M5 15 L16 5 L27 15 L27 27 Q 27 28 26 28 L6 28 Q 5 28 5 27 Z" fill="#FFB088" stroke="#E6804F" stroke-width="2" stroke-linejoin="round"/><path d="M3 16 L16 4 L29 16" stroke="#E6804F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="18" width="6" height="10" rx="1" fill="#7BC97B" stroke="#5BA85B" stroke-width="1.5"/><circle cx="17.5" cy="23" r="0.7" fill="#3D4451"/><rect x="8" y="17" width="3.5" height="3.5" rx="0.5" fill="#FFD93D" stroke="#C49B16" stroke-width="1"/></svg>`,
+  food: `<svg class="cute-icon" viewBox="0 0 32 32"><ellipse cx="16" cy="15" rx="11" ry="2" fill="#FFD93D" stroke="#C49B16" stroke-width="1.5"/><path d="M5 15 Q 5 27 16 27 Q 27 27 27 15" fill="#FF8A8A" stroke="#E66060" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="20" r="1" fill="#fff"/><circle cx="20" cy="20" r="1" fill="#fff"/><path d="M11 22 Q 16 25 21 22" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M11 11 Q 13 8 11 5" stroke="#C8E6C8" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M16 10 Q 18 7 16 4" stroke="#C8E6C8" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  car: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M4 22 L6 16 Q 7 13 10 13 L22 13 Q 25 13 26 16 L28 22 L28 25 Q 28 26 27 26 L5 26 Q 4 26 4 25 Z" fill="#87CEEB" stroke="#3D8FBF" stroke-width="2" stroke-linejoin="round"/><rect x="9" y="15" width="6" height="5" rx="1.5" fill="#fff" opacity="0.8"/><rect x="17" y="15" width="6" height="5" rx="1.5" fill="#fff" opacity="0.8"/><circle cx="10" cy="26" r="3.5" fill="#3D4451"/><circle cx="22" cy="26" r="3.5" fill="#3D4451"/><circle cx="10" cy="26" r="1.2" fill="#fff"/><circle cx="22" cy="26" r="1.2" fill="#fff"/><circle cx="26" cy="20" r="1.5" fill="#FFD93D"/></svg>`,
+  bulb: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M16 4 Q 24 4 24 13 Q 24 18 20 21 L20 23 L12 23 L12 21 Q 8 18 8 13 Q 8 4 16 4 Z" fill="#FFD93D" stroke="#C49B16" stroke-width="2" stroke-linejoin="round"/><rect x="12" y="24" width="8" height="3" rx="1" fill="#B8B8C5" stroke="#7C7C8C" stroke-width="1"/><rect x="13" y="28" width="6" height="2" rx="0.5" fill="#7C7C8C"/><circle cx="13" cy="11" r="2" fill="#fff" opacity="0.6"/><line x1="16" y1="1" x2="16" y2="3" stroke="#FFD93D" stroke-width="2" stroke-linecap="round"/><line x1="26" y1="6" x2="28" y2="5" stroke="#FFD93D" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="4" y2="5" stroke="#FFD93D" stroke-width="2" stroke-linecap="round"/></svg>`,
+  bag: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M11 11 Q 11 5 16 5 Q 21 5 21 11" stroke="#D973A8" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M7 11 L25 11 L24 28 Q 24 29 23 29 L9 29 Q 8 29 8 28 Z" fill="#FFB6D9" stroke="#D973A8" stroke-width="2" stroke-linejoin="round"/><path d="M16 16 Q 14 14 12.5 15.5 Q 11 17 13 19 L16 22 L19 19 Q 21 17 19.5 15.5 Q 18 14 16 16 Z" fill="#fff"/></svg>`,
+  tv: `<svg class="cute-icon" viewBox="0 0 32 32"><rect x="3" y="8" width="26" height="17" rx="3" fill="#B59FFF" stroke="#7A4FE0" stroke-width="2"/><rect x="5" y="10" width="22" height="13" rx="2" fill="#E8DFFF"/><circle cx="12" cy="16" r="2" fill="#3D4451"/><circle cx="20" cy="16" r="2" fill="#3D4451"/><circle cx="12.5" cy="15.5" r="0.6" fill="#fff"/><circle cx="20.5" cy="15.5" r="0.6" fill="#fff"/><path d="M12 20 Q 16 22 20 20" stroke="#3D4451" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="10" y1="28" x2="22" y2="28" stroke="#7A4FE0" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  plane: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M16 3 Q 18 3 18.5 7 L18.5 13 L28 17 Q 29 17.5 29 18.5 L29 20 Q 29 21 28 21 L18.5 19 L18.5 24 L21 26 Q 21.5 26.5 21.5 27 L21.5 28 Q 21.5 29 20.5 28.8 L16 28 L11.5 28.8 Q 10.5 29 10.5 28 L10.5 27 Q 10.5 26.5 11 26 L13.5 24 L13.5 19 L4 21 Q 3 21 3 20 L3 18.5 Q 3 17.5 4 17 L13.5 13 L13.5 7 Q 14 3 16 3 Z" fill="#87CEEB" stroke="#3D8FBF" stroke-width="1.8" stroke-linejoin="round"/><circle cx="16" cy="9" r="1" fill="#fff"/></svg>`,
+  piggy: `<svg class="cute-icon" viewBox="0 0 32 32"><ellipse cx="16" cy="19" rx="12" ry="9" fill="#FFB6D9" stroke="#D973A8" stroke-width="2"/><ellipse cx="8" cy="17" rx="3" ry="3.5" fill="#FF8AC4" stroke="#D973A8" stroke-width="1.5"/><circle cx="8" cy="17" r="1" fill="#3D4451"/><circle cx="22" cy="16" r="1.2" fill="#3D4451"/><circle cx="22.5" cy="15.5" r="0.4" fill="#fff"/><path d="M14 10 L19 10" stroke="#D973A8" stroke-width="2.5" stroke-linecap="round"/><rect x="8" y="26" width="3" height="3" rx="0.5" fill="#D973A8"/><rect x="21" y="26" width="3" height="3" rx="0.5" fill="#D973A8"/><path d="M22 23 Q 26 23 26 19" stroke="#D973A8" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="13" cy="20" r="1.5" fill="#FFD93D" stroke="#C49B16" stroke-width="0.8"/></svg>`,
+  chart: `<svg class="cute-icon" viewBox="0 0 32 32"><rect x="3" y="4" width="26" height="22" rx="3" fill="#fff" stroke="#3D8FBF" stroke-width="2"/><rect x="7" y="16" width="3.5" height="7" rx="1" fill="#FFB6D9"/><rect x="12.5" y="11" width="3.5" height="12" rx="1" fill="#FFD93D"/><rect x="18" y="7" width="3.5" height="16" rx="1" fill="#7BC97B"/><rect x="23.5" y="13" width="3.5" height="10" rx="1" fill="#87CEEB"/><circle cx="26" cy="7" r="2" fill="#7BC97B"/></svg>`,
+  bond: `<svg class="cute-icon" viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="20" rx="2" fill="#fff" stroke="#5BA85B" stroke-width="2"/><rect x="4" y="6" width="24" height="5" fill="#7BC97B"/><circle cx="8" cy="8.5" r="1" fill="#fff"/><circle cx="11" cy="8.5" r="1" fill="#fff"/><line x1="8" y1="15" x2="24" y2="15" stroke="#C8F0C0" stroke-width="1.5"/><line x1="8" y1="19" x2="20" y2="19" stroke="#C8F0C0" stroke-width="1.5"/><line x1="8" y1="23" x2="22" y2="23" stroke="#C8F0C0" stroke-width="1.5"/><circle cx="23" cy="22" r="3" fill="#FFD93D" stroke="#C49B16" stroke-width="1.2"/></svg>`,
+  gold: `<svg class="cute-icon" viewBox="0 0 32 32"><circle cx="11" cy="20" r="7" fill="#FFD93D" stroke="#C49B16" stroke-width="2"/><circle cx="11" cy="20" r="4.5" fill="none" stroke="#C49B16" stroke-width="1" stroke-dasharray="1.5 1.5"/><text x="11" y="23" text-anchor="middle" font-size="8" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text><circle cx="21" cy="13" r="6" fill="#FFE066" stroke="#C49B16" stroke-width="2"/><circle cx="21" cy="13" r="3.5" fill="none" stroke="#C49B16" stroke-width="1" stroke-dasharray="1.5 1.5"/><text x="21" y="16" text-anchor="middle" font-size="7" font-weight="900" fill="#8B6E0F" font-family="Arial">฿</text></svg>`,
+  crypto: `<svg class="cute-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#FF8A8A" stroke="#E66060" stroke-width="2"/><path d="M12 9 L12 23 M14 9 L14 23" stroke="#fff" stroke-width="0" fill="none"/><text x="16" y="22" text-anchor="middle" font-size="16" font-weight="900" fill="#fff" font-family="Arial">₿</text><circle cx="24" cy="8" r="2" fill="#FFD93D"/></svg>`,
+  cash: `<svg class="cute-icon" viewBox="0 0 32 32"><rect x="3" y="9" width="26" height="15" rx="2" fill="#C8F0C0" stroke="#5BA85B" stroke-width="2"/><circle cx="16" cy="16.5" r="4.5" fill="#7BC97B" stroke="#5BA85B" stroke-width="1.5"/><text x="16" y="20" text-anchor="middle" font-size="7" font-weight="900" fill="#fff" font-family="Arial">฿</text><circle cx="7" cy="13" r="1.2" fill="#5BA85B"/><circle cx="25" cy="20" r="1.2" fill="#5BA85B"/></svg>`,
+  retire: `<svg class="cute-icon" viewBox="0 0 32 32"><circle cx="16" cy="11" r="6" fill="#FFD9B8" stroke="#E6804F" stroke-width="2"/><path d="M9 10 Q 9 4 16 4 Q 23 4 23 10" stroke="#B8B8C5" stroke-width="2.5" fill="#E8E8EE" stroke-linecap="round"/><circle cx="13.5" cy="11.5" r="1" fill="#3D4451"/><circle cx="18.5" cy="11.5" r="1" fill="#3D4451"/><path d="M13 14 Q 16 16 19 14" stroke="#3D4451" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M7 28 Q 7 19 16 19 Q 25 19 25 28" fill="#87CEEB" stroke="#3D8FBF" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="22" r="1" fill="#FFD93D"/></svg>`,
+  baby: `<svg class="cute-icon" viewBox="0 0 32 32"><circle cx="16" cy="15" r="10" fill="#FFD9B8" stroke="#E6804F" stroke-width="2"/><circle cx="12" cy="14" r="1.3" fill="#3D4451"/><circle cx="20" cy="14" r="1.3" fill="#3D4451"/><circle cx="12.5" cy="13.5" r="0.5" fill="#fff"/><circle cx="20.5" cy="13.5" r="0.5" fill="#fff"/><path d="M12 18 Q 16 21 20 18" stroke="#3D4451" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="8" cy="18" rx="2" ry="2.5" fill="#FFB088" opacity="0.7"/><ellipse cx="24" cy="18" rx="2" ry="2.5" fill="#FFB088" opacity="0.7"/><path d="M10 7 L13 4 L16 7 L19 4 L22 7" stroke="#FFB6D9" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  home2: `<svg class="cute-icon" viewBox="0 0 32 32"><path d="M5 15 L16 5 L27 15 L27 27 L5 27 Z" fill="#FFD93D" stroke="#C49B16" stroke-width="2" stroke-linejoin="round"/><path d="M3 16 L16 4 L29 16" stroke="#C49B16" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="13" y="18" width="6" height="9" rx="1" fill="#FF8A8A" stroke="#E66060" stroke-width="1.5"/><circle cx="14" cy="11" r="2" fill="#FFB088"/><path d="M14 11 Q 18 7 22 11" stroke="#E66060" stroke-width="1.5" fill="none"/></svg>`,
+};
+
+/* ===== Charts ===== */
+let budgetChart, portChart;
+function ensureCharts(){
+  Chart.defaults.font.family = "'Mali','Sarabun',sans-serif";
+  Chart.defaults.color = '#3D4451';
+  const opts = {plugins:{legend:{display:false}},maintainAspectRatio:false};
+  if(!budgetChart){
+    budgetChart = new Chart($('budgetChart'),{
+      type:'doughnut',
+      data:{labels:['Needs','Wants','Savings'],datasets:[{data:[50,30,20],
+        backgroundColor:['#FF8A8A','#FFD93D','#7BC97B'],borderWidth:3,borderColor:'#fff'}]},
+      options:opts
+    });
+  }
+  if(!portChart){
+    portChart = new Chart($('portChart'),{
+      type:'doughnut',
+      data:{labels:[],datasets:[{data:[],backgroundColor:[],borderWidth:3,borderColor:'#fff'}]},
+      options:opts
+    });
+  }
+}
+
+/* ===== Thai progressive tax 2568 ===== */
+function calcTax(netIncome){
+  const brackets = [
+    [150000, 0],[150000,0.05],[200000,0.10],[250000,0.15],
+    [250000,0.20],[1000000,0.25],[3000000,0.30],[Infinity,0.35]
+  ];
+  let tax=0, rem=netIncome;
+  for(const [size,rate] of brackets){
+    if(rem<=0) break;
+    const take = Math.min(rem,size);
+    tax += take*rate;
+    rem -= take;
+  }
+  return Math.max(0,tax);
+}
+
+/* ===== Portfolio allocations ===== */
+function allocate(risk, age){
+  const eqByAge = Math.max(20, 100-age)/100;
+  let a;
+  if(risk==='low')  a = {eq:0.20, bond:0.55, gold:0.15, crypto:0.00, cash:0.10};
+  if(risk==='mid')  a = {eq:0.50, bond:0.30, gold:0.10, crypto:0.05, cash:0.05};
+  if(risk==='high') a = {eq:0.70, bond:0.10, gold:0.10, crypto:0.08, cash:0.02};
+  a.eq = +(a.eq*0.7 + eqByAge*0.3).toFixed(2);
+  const sum = Object.values(a).reduce((s,v)=>s+v,0);
+  for(const k in a) a[k] = a[k]/sum;
+  return a;
+}
+
+/* ===== Main calc ===== */
+function recalc(){
+  ensureCharts();
+  const salary = +$('salary').value || 0;
+  const bonus  = +$('bonus').value || 0;
+  const age    = +$('age').value || 30;
+  const retAge = +$('retireAge').value || 60;
+  const cur    = +$('currentSaving').value || 0;
+  const pvdPct = +$('pvdPct').value || 0;
+  const risk   = $('risk').value;
+  const debt   = +$('debt').value || 0;
+
+  const monthly = salary;
+  const annual  = salary*12 + bonus;
+
+  const needs = monthly*0.5, wants = monthly*0.3, save = monthly*0.2;
+  $('needsVal').textContent = baht(needs);
+  $('wantsVal').textContent = baht(wants);
+  $('saveVal').textContent  = baht(save);
+
+  const dsr = debt/monthly;
+  $('dsrVal').textContent = pct(dsr);
+  const dsrEl = $('dsrStatus');
+  if(dsr<0.3){dsrEl.innerHTML='<span class="chip good">😊 ดีมาก</span>'}
+  else if(dsr<0.4){dsrEl.innerHTML='<span class="chip warn">😐 ระวัง</span>'}
+  else{dsrEl.innerHTML='<span class="chip bad">😰 หนี้สูงเกิน</span>'}
+
+  const expense = needs+wants;
+  const emergency = expense*6;
+  $('emergencyVal').textContent = baht(emergency);
+  $('emergencyStatus').innerHTML = cur>=emergency
+    ? '<span class="chip good">✓ มีพอแล้ว</span>'
+    : `<span class="chip warn">ขาดอีก ${baht(emergency-cur)}</span>`;
+
+  const savePct = save/monthly;
+  $('savePctVal').textContent = pct(savePct);
+  $('savePctStatus').innerHTML = savePct>=0.2
+    ? '<span class="chip good">✓ ตามเป้า</span>'
+    : '<span class="chip warn">ต่ำกว่า 20%</span>';
+
+  const rows = [
+    [ICON.house, 'ที่อยู่อาศัย / ค่าเช่า / ผ่อนบ้าน', 25, monthly*0.25],
+    [ICON.food,  'อาหาร', 15, monthly*0.15],
+    [ICON.car,   'เดินทาง / น้ำมัน', 7, monthly*0.07],
+    [ICON.bulb,  'ค่าน้ำ-ไฟ-เน็ต-โทรศัพท์', 3, monthly*0.03],
+    [ICON.bag,   'ช้อปปิ้ง / กินเล่น / สังสรรค์', 15, monthly*0.15],
+    [ICON.tv,    'บันเทิง / สตรีมมิ่ง / งานอดิเรก', 8, monthly*0.08],
+    [ICON.plane, 'ท่องเที่ยว (เก็บไว้ใช้รายปี)', 7, monthly*0.07],
+    [ICON.piggy, 'เงินสำรอง / ลงทุน', 20, monthly*0.20],
+  ];
+  $('budgetBreakdown').innerHTML = '<tr><th>หมวด</th><th>%</th><th style="text-align:right">บาท/เดือน</th></tr>'
+    + rows.map(r=>`<tr><td><span class="row-with-icon">${r[0]}<span>${r[1]}</span></span></td><td>${r[2]}%</td><td style="text-align:right">${baht(r[3])}</td></tr>`).join('');
+
+  const a = allocate(risk, age);
+  const investAmt = cur>=emergency ? save : save*0.4;
+  $('investMonthly').textContent = baht(investAmt) + (cur>=emergency? '' : ' (40%)');
+
+  const labels = ['หุ้น/กองทุนหุ้น','ตราสารหนี้','ทองคำ','คริปโต','เงินสด/MMF'];
+  const icons  = [ICON.chart, ICON.bond, ICON.gold, ICON.crypto, ICON.cash];
+  const colors = ['#87CEEB','#7BC97B','#FFD93D','#FF8A8A','#B8B8C5'];
+  const vals = [a.eq,a.bond,a.gold,a.crypto,a.cash];
+  portChart.data.labels = labels;
+  portChart.data.datasets[0].data = vals.map(v=>+(v*100).toFixed(1));
+  portChart.data.datasets[0].backgroundColor = colors;
+  portChart.update();
+
+  $('portLegend').innerHTML = labels.map((l,i)=>
+    `<span><span class="dot" style="background:${colors[i]}"></span>${l} ${(vals[i]*100).toFixed(0)}%</span>`
+  ).join('');
+  $('portTable').innerHTML = labels.map((l,i)=>
+    `<tr><td><span class="row-with-icon">${icons[i]}<span>${l}</span></span></td><td>${(vals[i]*100).toFixed(0)}%</td><td style="text-align:right">${baht(vals[i]*investAmt)}</td></tr>`
+  ).join('');
+
+  // Tax
+  const personal = 60000;
+  const socialSec = Math.min(annual*0.05, 9000);
+  const expDeduct = Math.min(annual*0.5, 100000);
+  const pvdAmt = Math.min(salary*12 * pvdPct/100, 500000);
+  const taxableBeforeShield = Math.max(0, annual - personal - socialSec - expDeduct);
+  const taxBefore = calcTax(taxableBeforeShield - pvdAmt);
+  $('taxBefore').textContent = baht(taxBefore);
+
+  const ssfCap = Math.min(annual*0.30, 200000);
+  const rmfCap = Math.min(annual*0.30, 500000);
+  const esgCap = Math.min(annual*0.30, 300000);
+  const combinedRoom = Math.max(0, 500000 - pvdAmt - Math.min(esgCap*0.3,100000));
+  let ssfUse=0, rmfUse=0, esgUse=0;
+  const taxableNet = taxableBeforeShield - pvdAmt;
+  if(taxableNet > 150000){
+    ssfUse = Math.min(ssfCap, combinedRoom, save*12*0.5);
+    const remainRoom = combinedRoom - ssfUse;
+    rmfUse = Math.min(rmfCap, remainRoom, save*12*0.3);
+    esgUse = Math.min(esgCap, 100000, save*12*0.2);
+  }
+  $('ssfCap').textContent = baht(ssfCap);
+  $('rmfCap').textContent = baht(rmfCap);
+  $('esgCap').textContent = baht(esgCap);
+  $('pvdCap').textContent = baht(Math.min(salary*12*0.15, 500000));
+  $('ssfUse').textContent = baht(ssfUse);
+  $('rmfUse').textContent = baht(rmfUse);
+  $('esgUse').textContent = baht(esgUse);
+  $('pvdUse').textContent = baht(pvdAmt);
+  $('lifeUse').textContent = baht(0);
+
+  const totalShield = ssfUse + rmfUse + esgUse;
+  const taxAfter = calcTax(Math.max(0, taxableNet - totalShield));
+  $('taxAfter').textContent = baht(taxAfter);
+  $('taxSaved').textContent = baht(Math.max(0,taxBefore - taxAfter));
+  $('annualIncome').textContent = baht(annual);
+
+  // Retirement
+  const retireExpense = +$('retireExpense').value || 0;
+  const lifeExpect = +$('lifeExpect').value || 85;
+  const expectR = (+$('expectReturn').value||6)/100;
+  const yearsToRetire = Math.max(1, retAge - age);
+  const yearsAfterRetire = Math.max(1, lifeExpect - retAge);
+  $('retireYears').textContent = yearsAfterRetire;
+  const monthlyExpenseAtRetire = retireExpense * Math.pow(1.03, yearsToRetire);
+  const need = monthlyExpenseAtRetire * 12 * Math.min(25, yearsAfterRetire);
+  $('retireNeed').textContent = baht(need);
+  const r = expectR/12;
+  const n = yearsToRetire*12;
+  const fvCurrent = cur * Math.pow(1+expectR, yearsToRetire);
+  const gap = Math.max(0, need - fvCurrent);
+  const pmt = gap * r / (Math.pow(1+r,n)-1);
+  $('retireMonthly').textContent = baht(pmt);
+  const plannedMonthly = (save) + pvdAmt/12;
+  if(plannedMonthly >= pmt){
+    $('retireGap').innerHTML = '<span class="good">✓ ทำได้!</span>';
+    $('retireGapHint').textContent = `แผนปัจจุบันลงทุน ${baht(plannedMonthly)}/เดือน เกินเป้า 🎉`;
+  } else {
+    const short = pmt - plannedMonthly;
+    $('retireGap').innerHTML = `<span class="danger">ขาด ${baht(short)}/เดือน</span>`;
+    $('retireGapHint').textContent = `ลองเพิ่มเงินลงทุน หรือเลื่อนเกษียณออกไป`;
+  }
+
+  // House
+  const housePrice = +$('housePrice').value || 0;
+  const downPct = (+$('downPct').value||20)/100;
+  const houseYears = +$('houseYears').value || 5;
+  const downAmt = housePrice * downPct;
+  $('downAmt').textContent = baht(downAmt);
+  const rh = 0.02/12;
+  const nh = houseYears*12;
+  const downMonthly = downAmt * rh / (Math.pow(1+rh,nh)-1);
+  $('downMonthly').textContent = baht(downMonthly);
+
+  // Education
+  const childAge = +$('childAge').value || 0;
+  const eduCost  = +$('eduCost').value || 0;
+  const eduInfl  = (+$('eduInflation').value||5)/100;
+  const yearsToUni = Math.max(1, 18 - childAge);
+  const eduFuture = eduCost * Math.pow(1+eduInfl, yearsToUni);
+  $('eduFuture').textContent = baht(eduFuture);
+  const re = 0.05/12;
+  const ne = yearsToUni*12;
+  const eduMonthly = eduFuture * re / (Math.pow(1+re,ne)-1);
+  $('eduMonthly').textContent = baht(eduMonthly);
+}
+
+document.querySelectorAll('input,select').forEach(el=>{
+  el.addEventListener('input', recalc);
+  el.addEventListener('change', recalc);
+});
+
+/* inject cute icons into [data-icon] elements */
+document.querySelectorAll('[data-icon]').forEach(el=>{
+  const name = el.dataset.icon;
+  if(ICON[name]) el.insertAdjacentHTML('afterbegin', ICON[name]);
+});
+
+recalc();
+
+/* ============ NEWS & MARKET TAB ============ */
+const TIPS = [
+  {t:"กฎ 72 🦕", d:"อยากรู้ว่าเงินจะโตเท่าตัวกี่ปี? เอา 72 หารด้วยผลตอบแทน เช่น 6%/ปี → 72÷6 = 12 ปี เงินจะโตเป็น 2 เท่า"},
+  {t:"DCA ดีกว่าจับจังหวะ 📈", d:"งานวิจัยจำนวนมากยืนยันว่าการลงทุนสม่ำเสมอให้ผลลัพธ์ดีกว่าการพยายามซื้อตอนต่ำขายตอนสูง"},
+  {t:"เงินสำรองมาก่อน 🛟", d:"ก่อนซื้อหุ้นหรือคริปโต ควรมีเงินสำรอง 3-6 เท่าของค่าใช้จ่ายต่อเดือนในบัญชีออมทรัพย์ก่อน"},
+  {t:"ค่าธรรมเนียมกัดกินผลตอบแทน 💸", d:"กองทุน 2%/ปี vs กองทุนดัชนี 0.5%/ปี ถือ 30 ปี ส่วนต่างอาจเกิน 30% ของเงินทั้งหมด!"},
+  {t:"100 ลบอายุ = % หุ้นที่ควรถือ 🎯", d:"อายุ 30 → ลงหุ้น 70% ตราสารหนี้ 30% / อายุ 50 → หุ้น 50% ตราสารหนี้ 50%"},
+  {t:"PVD = เงินฟรีจากนายจ้าง 🎁", d:"ถ้าบริษัทสมทบให้ — สมทบเต็มเพดานเสมอ ไม่งั้นเหมือนปฏิเสธเงินเดือนเพิ่ม"},
+  {t:"SSF/RMF ลดภาษีคุ้มมาก 🧾", d:"ฐานภาษี 20% ทุก 10,000 ที่ลงทุน ได้คืนภาษีทันที 2,000 บาท เหมือนได้ส่วนลด 20%"},
+  {t:"กระจายความเสี่ยง 🧺", d:"อย่าใส่ไข่ทั้งหมดในตะกร้าใบเดียว — แม้แต่หุ้นบริษัทตัวเอง ก็ไม่ควรเกิน 10% ของพอร์ต"},
+  {t:"ทองคำคือประกันพอร์ต 🥇", d:"ทองมักขึ้นเมื่อหุ้นตก ใส่ 5-10% ของพอร์ตจะช่วยลดความผันผวนรวม"},
+  {t:"คริปโต = High Risk ⚡", d:"ลงคริปโตได้แต่อย่าเกิน 5-10% และเฉพาะเงินที่หายไปได้ — ราคาผันผวน 50% ในเดือนเดียวเป็นเรื่องปกติ"},
+  {t:"Rebalance ปีละครั้ง ⚖️", d:"ถ้าหุ้นโตเยอะ พอร์ตจะเอนหนักไป → ปลายปีขายส่วนเกินมาเติมตราสารหนี้ = ขายแพง-ซื้อถูกอัตโนมัติ"},
+  {t:"ดอกเบี้ยทบต้น = พลังที่ 8 ของโลก ✨", d:"ลง 5,000/เดือน 7%/ปี 30 ปี = 6.1 ล้าน (ลงเงินจริงแค่ 1.8 ล้าน ที่เหลือคือดอกเบี้ยทบต้น)"},
+  {t:"อย่าเช็คพอร์ตทุกวัน 😅", d:"การดูพอร์ตบ่อยๆ ทำให้ตัดสินใจด้วยอารมณ์ คนที่ดูน้อยมักได้ผลตอบแทนสูงกว่า"},
+  {t:"กระจายเวลาด้วย ⏰", d:"ถ้าได้โบนัสก้อนใหญ่ อย่าทุ่มซื้อทีเดียว → แบ่งซื้อ 3-6 เดือนเพื่อลดความเสี่ยงจังหวะตลาด"},
+  {t:"เงินเฟ้อ = ศัตรูเงียบ 👻", d:"เก็บใต้หมอน 100,000 วันนี้ อีก 20 ปีจะมีอำนาจซื้อเหลือแค่ ~55,000 (เงินเฟ้อ 3%/ปี)"},
+  {t:"กฎ 4% เพื่อเกษียณ 👴", d:"มีพอร์ตเกษียณ 10 ล้าน ถอน 4%/ปี = 400,000 (33,000/เดือน) เงินจะอยู่ได้อย่างน้อย 30 ปี"},
+  {t:"ตลาดตกไม่ใช่หายนะ 📉", d:"ตั้งแต่ปี 1928 S&P500 ตก >20% ทุก ~7 ปี แต่ระยะยาวยังให้ผลตอบแทน 9-10%/ปี — ขายตอนตกคือล็อกขาดทุน"},
+  {t:"ประกันชีวิต ≠ การลงทุน 🛡️", d:"ประกันคือการโอนความเสี่ยง ซื้อความคุ้มครองให้พอ ที่เหลือนำไปลงทุนแยกจะดีกว่า"},
+  {t:"คิดเป็นชั่วโมงทำงาน ⏱️", d:"ก่อนซื้อของฟุ่มเฟือย คิดว่าเท่ากับกี่ชั่วโมงทำงาน — มือถือ 30,000 = 150 ชม. = ~19 วัน"},
+  {t:"หนี้บัตรเครดิตคือศัตรู #1 🔥", d:"ดอกเบี้ยบัตร 16-25%/ปี ไม่มีการลงทุนไหนชนะได้แน่นอน — ปิดหนี้บัตรก่อนคิดเรื่องลงทุน"},
+];
+
+let tipIdx = 0;
+function showTip(i){
+  const tip = TIPS[i % TIPS.length];
+  $('tipText').innerHTML = `<b style="color:#C49B16;font-size:16px">${tip.t}</b><br/>${tip.d}`;
+  $('tipCount').textContent = `Tip ${(i%TIPS.length)+1} / ${TIPS.length}`;
+}
+function showTodayTip(){
+  const d = new Date();
+  $('tipDate').textContent = d.toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+  const start = new Date(d.getFullYear(),0,0);
+  const dayOfYear = Math.floor((d - start)/86400000);
+  tipIdx = dayOfYear % TIPS.length;
+  showTip(tipIdx);
+}
+$('tipNext').addEventListener('click', ()=>{ tipIdx = (tipIdx+1) % TIPS.length; showTip(tipIdx); });
+
+async function loadPrices(){
+  $('priceUpdated').textContent = 'กำลังโหลด…';
+  try{
+    const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=THB');
+    const j = await r.json();
+    $('usdthbVal').textContent = j.rates.THB.toFixed(2) + ' ฿';
+    $('usdthbChg').textContent = 'อัปเดต ' + j.date;
+  }catch(e){
+    $('usdthbVal').textContent = 'โหลดไม่ได้';
+    $('usdthbChg').innerHTML = '<span class="danger">ลองรีเฟรชอีกครั้ง</span>';
+  }
+  try{
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd,thb&include_24hr_change=true');
+    const j = await r.json();
+    const fmtChg = (n)=>{
+      const cls = n>=0?'good':'danger';
+      const sign = n>=0?'▲':'▼';
+      return `<span class="${cls}">${sign} ${Math.abs(n).toFixed(2)}% (24ชม.)</span>`;
+    };
+    if(j.bitcoin){
+      $('btcVal').textContent = '฿' + Math.round(j.bitcoin.thb).toLocaleString('th-TH');
+      $('btcChg').innerHTML = fmtChg(j.bitcoin.thb_24h_change||0);
+    }
+    if(j.ethereum){
+      $('ethVal').textContent = '฿' + Math.round(j.ethereum.thb).toLocaleString('th-TH');
+      $('ethChg').innerHTML = fmtChg(j.ethereum.thb_24h_change||0);
+    }
+    if(j['pax-gold']){
+      $('goldVal').textContent = '$' + Math.round(j['pax-gold'].usd).toLocaleString('en-US');
+      $('goldChg').innerHTML = fmtChg(j['pax-gold'].usd_24h_change||0);
+    }
+  }catch(e){
+    ['btcVal','ethVal','goldVal'].forEach(id=>$(id).textContent='โหลดไม่ได้');
+  }
+  $('priceUpdated').textContent = '✓ อัปเดต ' + new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+}
+$('refreshPrice').addEventListener('click', loadPrices);
+
+function loadTicker(){
+  const c = $('tvTicker');
+  if(c.dataset.loaded) return;
+  c.dataset.loaded = '1';
+  c.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+  const s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    symbols: [
+      {description:'SET Index',proName:'SET:SET'},
+      {description:'ทองคำ',proName:'TVC:GOLD'},
+      {description:'USD/THB',proName:'FX_IDC:USDTHB'},
+      {description:'JPY/THB',proName:'FX_IDC:JPYTHB'},
+      {description:'Bitcoin',proName:'BINANCE:BTCUSDT'},
+      {description:'S&P 500',proName:'SP:SPX'},
+      {description:'Nasdaq',proName:'NASDAQ:NDX'},
+      {description:'น้ำมัน WTI',proName:'TVC:USOIL'},
+    ],
+    showSymbolLogo:true,isTransparent:true,displayMode:'adaptive',
+    colorTheme:'light',locale:'th_TH'
+  });
+  c.querySelector('.tradingview-widget-container').appendChild(s);
+}
+
+async function loadFeed(url, max=6){
+  const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
+  const r = await fetch(api);
+  if(!r.ok) throw new Error('fetch failed');
+  const j = await r.json();
+  if(j.status !== 'ok') throw new Error('rss failed');
+  return j.items.slice(0, max);
+}
+function renderItem(it, sourceName){
+  const date = new Date(it.pubDate);
+  const dateStr = date.toLocaleDateString('th-TH',{day:'numeric',month:'short'}) + ' ' +
+                  date.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  const title = (it.title||'').replace(/<[^>]+>/g,'').slice(0,140);
+  return `<div class="news-item">
+    <a href="${it.link}" target="_blank" rel="noopener">${title}</a>
+    <div class="news-meta">📌 ${sourceName} · ${dateStr}</div>
+  </div>`;
+}
+async function loadNews(){
+  const thaiSources = [
+    {url:'https://www.bangkokbiznews.com/rss/feed/finance.xml', name:'กรุงเทพธุรกิจ'},
+    {url:'https://www.thansettakij.com/feed', name:'ฐานเศรษฐกิจ'},
+    {url:'https://thestandard.co/category/wealth/feed/', name:'THE STANDARD'},
+    {url:'https://moneybuffalo.in.th/feed', name:'Money Buffalo'},
+  ];
+  const globalSources = [
+    {url:'https://feeds.bloomberg.com/markets/news.rss', name:'Bloomberg'},
+    {url:'https://www.investing.com/rss/news_25.rss', name:'Investing.com'},
+    {url:'https://feeds.content.dowjones.io/public/rss/RSSMarketsMain', name:'WSJ Markets'},
+  ];
+  async function gather(sources, max=8){
+    const all = [];
+    await Promise.all(sources.map(async s=>{
+      try{
+        const items = await loadFeed(s.url, 4);
+        items.forEach(it => all.push({...it, _source:s.name}));
+      }catch(e){}
+    }));
+    all.sort((a,b)=> new Date(b.pubDate) - new Date(a.pubDate));
+    return all.slice(0, max);
+  }
+  try{
+    const thai = await gather(thaiSources, 8);
+    $('newsTH').innerHTML = thai.length
+      ? thai.map(it=>renderItem(it, it._source)).join('')
+      : '<div style="color:var(--muted);font-size:13px">น้องออมโหลดข่าวไม่สำเร็จ — ลองดูจากแหล่งด้านล่างแทนนะ 🦕</div>';
+  }catch(e){
+    $('newsTH').innerHTML = '<div class="danger">โหลดข่าวไม่สำเร็จ</div>';
+  }
+  try{
+    const glob = await gather(globalSources, 8);
+    $('newsGlobal').innerHTML = glob.length
+      ? glob.map(it=>renderItem(it, it._source)).join('')
+      : '<div style="color:var(--muted);font-size:13px">โหลดข่าวไม่สำเร็จ</div>';
+  }catch(e){
+    $('newsGlobal').innerHTML = '<div class="danger">โหลดข่าวไม่สำเร็จ</div>';
+  }
+}
+
+let newsLoaded = false;
+document.querySelector('[data-tab="news"]').addEventListener('click', ()=>{
+  showTodayTip();
+  loadTicker();
+  if(!newsLoaded){
+    newsLoaded = true;
+    loadPrices();
+    loadNews();
+  }
+});
+showTodayTip();
+</script>
+</body>
+</html>
